@@ -1,0 +1,1244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DSA Grind</title>
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-BNW3JE8DR9"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-BNW3JE8DR9');
+</script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@300;400;500;600&display=swap');
+
+  :root {
+    --bg: #0d1117;
+    --bg2: #161b22;
+    --bg3: #1c2333;
+    --bg4: #21262d;
+    --border: #30363d;
+    --border2: #484f58;
+    --text: #e6edf3;
+    --text2: #8b949e;
+    --text3: #6e7681;
+    --accent: #58a6ff;
+    --accent2: #1f6feb;
+    --green: #3fb950;
+    --green-bg: #0d2818;
+    --amber: #d29922;
+    --amber-bg: #272115;
+    --red: #f85149;
+    --red-bg: #2d1117;
+    --purple: #bc8cff;
+    --purple-bg: #1e1637;
+    --teal: #39d353;
+    --mono: 'JetBrains Mono', monospace;
+    --sans: 'Inter', sans-serif;
+    --radius: 8px;
+    --radius-lg: 12px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 14px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* ── TOP NAV ── */
+  .topbar {
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    height: 56px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .topbar-brand {
+    font-family: var(--mono);
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--accent);
+    letter-spacing: -0.3px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+  }
+  .topbar-brand span { color: var(--text2); font-weight: 400; }
+  .topbar-divider { width: 1px; height: 24px; background: var(--border); }
+  .topbar-stats { display: flex; gap: 16px; flex: 1; }
+  .tstat { display: flex; align-items: center; gap: 6px; font-size: 12px; }
+  .tstat-dot { width: 8px; height: 8px; border-radius: 50%; }
+  .tstat-label { color: var(--text2); }
+  .tstat-val { font-family: var(--mono); font-weight: 600; }
+  .topbar-actions { display: flex; gap: 8px; margin-left: auto; }
+  .btn {
+    padding: 6px 14px;
+    border-radius: var(--radius);
+    border: 1px solid var(--border2);
+    background: var(--bg3);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .btn:hover { background: var(--bg4); border-color: var(--accent); color: var(--accent); }
+  .btn-primary { background: var(--accent2); border-color: var(--accent); color: #fff; }
+  .btn-primary:hover { background: var(--accent); color: #000; }
+  .btn-danger { border-color: var(--red); color: var(--red); }
+  .btn-danger:hover { background: var(--red-bg); }
+
+  /* ── LAYOUT ── */
+  .layout { display: flex; height: calc(100vh - 56px); }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    width: 220px;
+    min-width: 220px;
+    background: var(--bg2);
+    border-right: 1px solid var(--border);
+    overflow-y: auto;
+    padding: 16px 0;
+  }
+  .sidebar-section { margin-bottom: 4px; }
+  .sidebar-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text3);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 8px 16px 4px;
+  }
+  .sidebar-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 16px;
+    cursor: pointer;
+    transition: background 0.1s;
+    border-left: 3px solid transparent;
+    font-size: 13px;
+    color: var(--text2);
+  }
+  .sidebar-item:hover { background: var(--bg3); color: var(--text); }
+  .sidebar-item.active { background: var(--bg3); color: var(--accent); border-left-color: var(--accent); }
+  .sidebar-item .cat-name { flex: 1; }
+  .sidebar-item .cat-count {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text3);
+    background: var(--bg4);
+    padding: 1px 6px;
+    border-radius: 99px;
+  }
+  .sidebar-item .cat-done {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--green);
+  }
+
+  /* ── MAIN CONTENT ── */
+  .main {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0;
+  }
+
+  /* ── FILTERS ── */
+  .filters-bar {
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 24px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+  .search-wrap { position: relative; }
+  .search-wrap input {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 13px;
+    height: 34px;
+    padding: 0 12px 0 34px;
+    width: 220px;
+    transition: border-color 0.2s;
+    outline: none;
+  }
+  .search-wrap input:focus { border-color: var(--accent); }
+  .search-wrap input::placeholder { color: var(--text3); }
+  .search-icon {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text3);
+    font-size: 14px;
+    pointer-events: none;
+  }
+  select.filter-sel {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text2);
+    font-family: var(--sans);
+    font-size: 12px;
+    height: 34px;
+    padding: 0 10px;
+    cursor: pointer;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  select.filter-sel:focus { border-color: var(--accent); }
+  .filter-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    border-radius: 99px;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    color: var(--text2);
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .filter-chip:hover { border-color: var(--accent); color: var(--accent); }
+  .filter-chip.active { border-color: var(--accent); background: #0d2436; color: var(--accent); }
+  .filter-chip .dot { width: 6px; height: 6px; border-radius: 50%; }
+
+  /* ── PROGRESS BANNER ── */
+  .progress-banner {
+    margin: 20px 24px 0;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 16px 20px;
+    display: flex;
+    gap: 24px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .prog-stat { text-align: center; min-width: 60px; }
+  .prog-stat .num { font-family: var(--mono); font-size: 22px; font-weight: 600; }
+  .prog-stat .lbl { font-size: 11px; color: var(--text3); margin-top: 2px; }
+  .prog-bar-wrap { flex: 1; min-width: 160px; }
+  .prog-bar-label { display: flex; justify-content: space-between; font-size: 11px; color: var(--text3); margin-bottom: 6px; }
+  .prog-bar-track { height: 8px; background: var(--bg4); border-radius: 99px; overflow: hidden; }
+  .prog-bar-fill { height: 100%; background: linear-gradient(90deg, var(--accent2), var(--green)); border-radius: 99px; transition: width 0.4s ease; }
+
+  /* ── CATEGORY SECTION ── */
+  .category-section { margin: 20px 24px; }
+  .cat-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    user-select: none;
+    padding: 4px 0;
+  }
+  .cat-header h2 {
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    letter-spacing: -0.2px;
+  }
+  .cat-header .cat-badge {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text3);
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    padding: 1px 8px;
+    border-radius: 99px;
+  }
+  .cat-header .cat-progress {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--green);
+    margin-left: auto;
+  }
+  .cat-header .cat-toggle { color: var(--text3); font-size: 11px; transition: transform 0.2s; }
+  .cat-header.collapsed .cat-toggle { transform: rotate(-90deg); }
+
+  /* ── TABLE ── */
+  .table-wrap { overflow-x: auto; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    font-size: 13px;
+  }
+  thead { background: var(--bg3); }
+  th {
+    text-align: left;
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text3);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  td {
+    padding: 9px 14px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+  }
+  tr:last-child td { border-bottom: none; }
+  tr.done-row { opacity: 0.6; }
+  tr.done-row td:first-child { opacity: 1; }
+  tbody tr { transition: background 0.1s; }
+  tbody tr:hover { background: var(--bg3); }
+
+  /* ── CHECKBOX ── */
+  .check-cell { text-align: center; width: 40px; }
+  .custom-check {
+    width: 18px;
+    height: 18px;
+    border: 1.5px solid var(--border2);
+    border-radius: 4px;
+    background: var(--bg);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+    color: transparent;
+    font-size: 11px;
+    user-select: none;
+    flex-shrink: 0;
+  }
+  .custom-check:hover { border-color: var(--green); }
+  .custom-check.checked { background: var(--green); border-color: var(--green); color: #000; font-weight: 700; }
+
+  /* ── PROBLEM LINK ── */
+  .prob-link {
+    color: var(--text);
+    text-decoration: none;
+    font-weight: 400;
+    transition: color 0.15s;
+    font-family: var(--sans);
+  }
+  .prob-link:hover { color: var(--accent); text-decoration: underline; }
+  .lc-num { color: var(--text3); font-family: var(--mono); font-size: 11px; margin-right: 8px; }
+
+  /* ── YOUTUBE LINK ── */
+  .yt-link {
+    display: inline-flex;
+    align-items: center;
+    color: var(--text3);
+    margin-left: 6px;
+    opacity: 0.45;
+    transition: opacity 0.15s, color 0.15s;
+    vertical-align: middle;
+    text-decoration: none;
+    padding: 4px;
+  }
+  .yt-link:hover { opacity: 1; color: #ff4444; }
+  .yt-link svg { width: 13px; height: 13px; }
+  @media (max-width: 768px) {
+    .yt-link { padding: 8px; margin-left: 2px; opacity: 0.7; }
+    .yt-link svg { width: 20px; height: 20px; }
+  }
+
+  /* ── DIFFICULTY BADGES ── */
+  .diff { display: inline-block; font-size: 11px; font-weight: 500; padding: 2px 9px; border-radius: 99px; font-family: var(--mono); }
+  .diff-Easy { background: var(--green-bg); color: var(--green); border: 1px solid #1a4a2a; }
+  .diff-Medium { background: var(--amber-bg); color: var(--amber); border: 1px solid #4a3a10; }
+  .diff-Hard { background: var(--red-bg); color: var(--red); border: 1px solid #4a1a1a; }
+
+  /* ── FREQUENCY ── */
+  .freq-wrap { display: flex; align-items: center; gap: 3px; }
+  .freq-pip { width: 7px; height: 7px; border-radius: 50%; background: var(--border2); }
+  .freq-pip.lit.f1 { background: var(--text3); }
+  .freq-pip.lit.f2 { background: var(--amber); }
+  .freq-pip.lit.f3 { background: var(--accent); }
+  .freq-pip.lit.f4 { background: var(--purple); }
+  .freq-label { font-family: var(--mono); font-size: 11px; color: var(--text3); margin-left: 4px; }
+
+  /* ── SOURCE TAGS ── */
+  .src-tags { display: flex; gap: 3px; flex-wrap: wrap; }
+  .src-tag { font-size: 10px; font-family: var(--mono); padding: 1px 7px; border-radius: 99px; white-space: nowrap; }
+  .src-B75 { background: #0d2436; color: #58a6ff; border: 1px solid #1a4a6a; }
+  .src-NC150 { background: var(--purple-bg); color: var(--purple); border: 1px solid #2d1a5a; }
+  .src-G75 { background: var(--green-bg); color: var(--green); border: 1px solid #1a4a2a; }
+  .src-FB { background: var(--amber-bg); color: var(--amber); border: 1px solid #4a3a10; }
+
+  /* ── PRACTICE COUNTER ── */
+  .practice-cell { white-space: nowrap; }
+  .practice-wrap {
+    display: inline-flex;
+    align-items: center;
+    gap: 0;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .prac-btn {
+    width: 26px;
+    height: 26px;
+    border: none;
+    background: transparent;
+    color: var(--text2);
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.1s;
+    line-height: 1;
+  }
+  .prac-btn:hover { background: var(--bg3); color: var(--accent); }
+  .prac-num {
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text);
+    min-width: 24px;
+    text-align: center;
+    padding: 0 2px;
+    border-left: 1px solid var(--border);
+    border-right: 1px solid var(--border);
+    height: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .prac-num.has-count { color: var(--accent); }
+
+  /* ── NOTES ── */
+  .note-btn {
+    background: none;
+    border: none;
+    color: var(--text3);
+    cursor: pointer;
+    font-size: 13px;
+    padding: 3px 6px;
+    border-radius: 4px;
+    transition: all 0.15s;
+  }
+  .note-btn:hover { background: var(--bg3); color: var(--accent); }
+  .note-btn.has-note { color: var(--amber); }
+
+  /* ── NOTE MODAL ── */
+  .modal-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+  }
+  .modal-backdrop.open { display: flex; }
+  .modal {
+    background: var(--bg2);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    width: 500px;
+    max-width: 90vw;
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .modal-title { font-family: var(--mono); font-size: 14px; font-weight: 600; color: var(--text); }
+  .modal-sub { font-size: 12px; color: var(--text3); }
+  .modal textarea {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 13px;
+    padding: 12px;
+    height: 160px;
+    resize: vertical;
+    outline: none;
+    line-height: 1.6;
+    width: 100%;
+    transition: border-color 0.2s;
+  }
+  .modal textarea:focus { border-color: var(--accent); }
+  .modal-actions { display: flex; gap: 8px; justify-content: flex-end; }
+
+  /* ── TAGS ── */
+  .tag-list { display: flex; gap: 3px; flex-wrap: wrap; max-width: 200px; }
+  .tag { font-size: 10px; padding: 1px 7px; border-radius: 99px; background: var(--bg3); color: var(--text3); border: 1px solid var(--border); white-space: nowrap; }
+
+  /* ── EMPTY STATE ── */
+  .empty-state {
+    text-align: center;
+    padding: 60px 24px;
+    color: var(--text3);
+    font-family: var(--mono);
+  }
+  .empty-state p { margin-top: 8px; font-size: 13px; }
+
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg2); }
+  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--text3); }
+
+  /* ── TOAST ── */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--bg2);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius);
+    padding: 10px 16px;
+    font-size: 13px;
+    color: var(--text);
+    z-index: 999;
+    transform: translateY(80px);
+    opacity: 0;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .toast.show { transform: translateY(0); opacity: 1; }
+  .toast.success { border-color: var(--green); }
+  .toast.danger { border-color: var(--red); }
+
+  /* ── HIDDEN ── */
+  .hidden { display: none !important; }
+
+  /* ── COLLAPSED SECTION ── */
+  .section-body.collapsed { display: none; }
+
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    .sidebar { display: none; }
+    .topbar-stats { display: none; }
+    .tag-list { display: none; }
+  }
+
+  /* ── WELCOME BANNER ── */
+  .welcome-banner {
+    margin: 20px 24px 0;
+    background: linear-gradient(135deg, #0d2436 0%, #1a1a2e 50%, #0d2818 100%);
+    border: 1px solid #1f4060;
+    border-radius: var(--radius-lg);
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+  .welcome-banner::before {
+    content: '';
+    position: absolute;
+    top: -40px; right: -40px;
+    width: 160px; height: 160px;
+    background: radial-gradient(circle, rgba(88,166,255,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .welcome-banner::after {
+    content: '';
+    position: absolute;
+    bottom: -30px; left: 20px;
+    width: 120px; height: 120px;
+    background: radial-gradient(circle, rgba(63,185,80,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .wb-icon { font-size: 32px; flex-shrink: 0; }
+  .wb-body { flex: 1; }
+  .wb-title { font-family: var(--mono); font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+  .wb-desc { font-size: 12px; color: var(--text2); line-height: 1.6; }
+  .wb-desc strong { color: var(--accent); font-weight: 500; }
+  .wb-pills { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+  .wb-pill {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-size: 11px; padding: 3px 10px; border-radius: 99px;
+    border: 1px solid; font-family: var(--mono); white-space: nowrap;
+  }
+  .wb-pill-green { background: var(--green-bg); color: var(--green); border-color: #1a4a2a; }
+  .wb-pill-blue  { background: #0d2436; color: var(--accent); border-color: #1f4060; }
+  .wb-pill-amber { background: var(--amber-bg); color: var(--amber); border-color: #4a3a10; }
+  .wb-pill-purple { background: var(--purple-bg); color: var(--purple); border-color: #2d1a5a; }
+  .wb-dismiss {
+    background: none; border: none; color: var(--text3); cursor: pointer;
+    font-size: 16px; padding: 4px; border-radius: 4px; flex-shrink: 0;
+    transition: color 0.15s; align-self: flex-start;
+  }
+  .wb-dismiss:hover { color: var(--text); }
+  .welcome-banner.dismissed { display: none; }
+
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="topbar-brand">🧠 <span>DSA</span>Grind</div>
+  <div class="topbar-divider"></div>
+  <div class="topbar-stats" id="topStats"></div>
+  <div class="topbar-actions">
+      <span class="user-name" id="userNameDisplay"></span>
+    </div>
+    <button class="btn" id="collapseAllBtn" onclick="toggleAllCats()">⊟ Collapse All</button>
+    <button class="btn" onclick="exportData()">⬆ Export</button>
+    <button class="btn" onclick="document.getElementById('importFile').click()">⬇ Import</button>
+    <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)">
+    <button class="btn btn-danger" onclick="confirmReset()">Reset All</button>
+  </div>
+</div>
+
+<!-- LAYOUT -->
+<div class="layout">
+  <!-- SIDEBAR -->
+  <div class="sidebar" id="sidebar"></div>
+
+  <!-- MAIN -->
+  <div class="main" id="main">
+    <!-- FILTERS -->
+    <div class="filters-bar">
+      <div class="search-wrap">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="searchInput" placeholder="Search problems..." oninput="renderAll()">
+      </div>
+      <select class="filter-sel" id="diffSel" onchange="renderAll()">
+        <option value="">All Difficulties</option>
+        <option value="Easy">Easy</option>
+        <option value="Medium">Medium</option>
+        <option value="Hard">Hard</option>
+      </select>
+      <select class="filter-sel" id="srcSel" onchange="renderAll()">
+        <option value="">All Sources</option>
+        <option value="B75">Blind 75</option>
+        <option value="G75">Grind 75</option>
+        <option value="FB">FAANG</option>
+      </select>
+      <div class="filter-chip" id="chip-hot" onclick="toggleChip('hot')">
+        <span class="dot" style="background:var(--purple)"></span> 3+ Lists
+      </div>
+      <div class="filter-chip" id="chip-undone" onclick="toggleChip('undone')">
+        <span class="dot" style="background:var(--amber)"></span> Not Done
+      </div>
+      <div class="filter-chip" id="chip-done" onclick="toggleChip('done')">
+        <span class="dot" style="background:var(--green)"></span> Completed
+      </div>
+    </div>
+
+
+    <!-- WELCOME BANNER -->
+    <div class="welcome-banner" id="welcomeBanner">
+      <div class="wb-icon">🧠</div>
+      <div class="wb-body">
+        <div class="wb-title">Your interview prep. Your browser. Your rules.</div>
+        <div class="wb-desc">
+          <strong>200+ curated problems</strong> - ranked by how often they appear across popular study lists.
+          Track what you've solved, how many times you've practiced, and add notes on your approach.
+          <br>
+          <strong>No account. No server. No cost. Ever.</strong> Progress is saved right here in your browser - it's yours alone.
+        </div>
+        <div class="wb-pills">
+          <span class="wb-pill wb-pill-green">✓ Free forever</span>
+          <span class="wb-pill wb-pill-blue">⚡ Works offline</span>
+          <span class="wb-pill wb-pill-amber">🔒 100% private</span>
+          <span class="wb-pill wb-pill-purple">💾 Auto-saved locally</span>
+        </div>
+      </div>
+      <button class="wb-dismiss" onclick="dismissBanner()" title="Dismiss">✕</button>
+    </div>
+
+    <!-- PROGRESS + CONTENT -->
+    <div id="pageContent"></div>
+  </div>
+</div>
+
+<!-- NOTE MODAL -->
+<div class="modal-backdrop" id="noteModal" onclick="closeModal(event)">
+  <div class="modal">
+    <div>
+      <div class="modal-title" id="noteModalTitle">Notes</div>
+      <div class="modal-sub" id="noteModalSub"></div>
+    </div>
+    <textarea id="noteTextarea" placeholder="Write your notes, approach, time complexity..."></textarea>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeNoteModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveNote()">Save Note</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ─────────────────────────── DATA ───────────────────────────
+const PROBLEMS = [
+  {cat:"Arrays & Hashing",name:"Two Sum",lc:1,diff:"Easy",src:["B75","NC150","G75","FB"],tags:["Hash Table","Array"]},
+  {cat:"Arrays & Hashing",name:"Contains Duplicate",lc:217,diff:"Easy",src:["B75","NC150","G75"],tags:["Array","Hash Table"]},
+  {cat:"Arrays & Hashing",name:"Valid Anagram",lc:242,diff:"Easy",src:["B75","NC150","G75"],tags:["Hash Table","String"]},
+  {cat:"Arrays & Hashing",name:"Group Anagrams",lc:49,diff:"Medium",src:["B75","NC150","FB"],tags:["Hash Table","String"]},
+  {cat:"Arrays & Hashing",name:"Top K Frequent Elements",lc:347,diff:"Medium",src:["B75","NC150"],tags:["Array","Hash Table","Heap"]},
+  {cat:"Arrays & Hashing",name:"Encode and Decode Strings",lc:271,diff:"Medium",src:["B75","NC150"],tags:["String","Design"]},
+  {cat:"Arrays & Hashing",name:"Product of Array Except Self",lc:238,diff:"Medium",src:["B75","NC150","G75","FB"],tags:["Array","Prefix Sum"]},
+  {cat:"Arrays & Hashing",name:"Longest Consecutive Sequence",lc:128,diff:"Medium",src:["B75","NC150"],tags:["Array","Hash Table","Union Find"]},
+  {cat:"Arrays & Hashing",name:"Valid Sudoku",lc:36,diff:"Medium",src:["NC150"],tags:["Array","Hash Table","Matrix"]},
+  {cat:"Arrays & Hashing",name:"Move Zeroes",lc:283,diff:"Easy",src:["FB"],tags:["Array","Two Pointers"]},
+  {cat:"Arrays & Hashing",name:"String to Integer (atoi)",lc:8,diff:"Medium",src:["G75","FB"],tags:["String"]},
+  {cat:"Arrays & Hashing",name:"Roman to Integer",lc:13,diff:"Easy",src:["FB"],tags:["Hash Table","Math"]},
+  {cat:"Arrays & Hashing",name:"Multiply Strings",lc:43,diff:"Medium",src:["NC150","FB"],tags:["Math","String"]},
+  {cat:"Arrays & Hashing",name:"Add Binary",lc:67,diff:"Easy",src:["G75","FB"],tags:["Math","String","Bit Manipulation"]},
+  {cat:"Arrays & Hashing",name:"Subarray Sum Equals K",lc:560,diff:"Medium",src:["FB"],tags:["Array","Hash Table","Prefix Sum"]},
+  {cat:"Arrays & Hashing",name:"Majority Element",lc:169,diff:"Easy",src:["G75"],tags:["Array","Sorting"]},
+  {cat:"Arrays & Hashing",name:"Sort Colors",lc:75,diff:"Medium",src:["G75"],tags:["Array","Two Pointers","Sorting"]},
+  {cat:"Arrays & Hashing",name:"Next Permutation",lc:31,diff:"Medium",src:["FB"],tags:["Array","Two Pointers"]},
+  {cat:"Arrays & Hashing",name:"Remove Duplicates from Sorted Array",lc:26,diff:"Easy",src:["FB"],tags:["Array","Two Pointers"]},
+  {cat:"Arrays & Hashing",name:"Merge Sorted Array",lc:88,diff:"Easy",src:["FB"],tags:["Array","Two Pointers","Sorting"]},
+  {cat:"Arrays & Hashing",name:"Ransom Note",lc:383,diff:"Easy",src:["G75"],tags:["Hash Table","String"]},
+  {cat:"Arrays & Hashing",name:"Find All Anagrams in a String",lc:438,diff:"Medium",src:["G75","FB"],tags:["Hash Table","Sliding Window"]},
+  {cat:"Two Pointers",name:"Valid Palindrome",lc:125,diff:"Easy",src:["B75","NC150","G75","FB"],tags:["Two Pointers","String"]},
+  {cat:"Two Pointers",name:"3Sum",lc:15,diff:"Medium",src:["B75","NC150","G75","FB"],tags:["Array","Two Pointers","Sorting"]},
+  {cat:"Two Pointers",name:"Container With Most Water",lc:11,diff:"Medium",src:["B75","NC150","G75"],tags:["Array","Two Pointers","Greedy"]},
+  {cat:"Two Pointers",name:"Trapping Rain Water",lc:42,diff:"Hard",src:["NC150","G75"],tags:["Array","Two Pointers","Dynamic Programming"]},
+  {cat:"Two Pointers",name:"Two Sum II Input Array Is Sorted",lc:167,diff:"Medium",src:["NC150"],tags:["Array","Two Pointers","Binary Search"]},
+  {cat:"Two Pointers",name:"Valid Palindrome II",lc:680,diff:"Easy",src:["FB"],tags:["Two Pointers","String","Greedy"]},
+  {cat:"Sliding Window",name:"Best Time to Buy and Sell Stock",lc:121,diff:"Easy",src:["B75","NC150","G75","FB"],tags:["Array","Dynamic Programming","Sliding Window"]},
+  {cat:"Sliding Window",name:"Longest Substring Without Repeating Characters",lc:3,diff:"Medium",src:["B75","NC150","G75","FB"],tags:["Hash Table","String","Sliding Window"]},
+  {cat:"Sliding Window",name:"Longest Repeating Character Replacement",lc:424,diff:"Medium",src:["B75","NC150"],tags:["Hash Table","String","Sliding Window"]},
+  {cat:"Sliding Window",name:"Minimum Window Substring",lc:76,diff:"Hard",src:["B75","NC150","G75","FB"],tags:["Hash Table","String","Sliding Window"]},
+  {cat:"Sliding Window",name:"Permutation in String",lc:567,diff:"Medium",src:["NC150","FB"],tags:["Hash Table","String","Sliding Window"]},
+  {cat:"Sliding Window",name:"Longest Substring with At Most K Distinct",lc:340,diff:"Medium",src:["FB"],tags:["Hash Table","String","Sliding Window"]},
+  {cat:"Stack",name:"Valid Parentheses",lc:20,diff:"Easy",src:["NC150","G75"],tags:["String","Stack"]},
+  {cat:"Stack",name:"Min Stack",lc:155,diff:"Medium",src:["NC150","G75"],tags:["Stack","Design"]},
+  {cat:"Stack",name:"Evaluate Reverse Polish Notation",lc:150,diff:"Medium",src:["NC150","G75"],tags:["Array","Math","Stack"]},
+  {cat:"Stack",name:"Daily Temperatures",lc:739,diff:"Medium",src:["NC150"],tags:["Array","Stack","Monotonic Stack"]},
+  {cat:"Stack",name:"Car Fleet",lc:853,diff:"Medium",src:["NC150"],tags:["Array","Stack","Sorting"]},
+  {cat:"Stack",name:"Generate Parentheses",lc:22,diff:"Medium",src:["NC150","G75"],tags:["String","Dynamic Programming","Backtracking"]},
+  {cat:"Stack",name:"Largest Rectangle in Histogram",lc:84,diff:"Hard",src:["G75"],tags:["Array","Stack","Monotonic Stack"]},
+  {cat:"Stack",name:"Basic Calculator",lc:224,diff:"Hard",src:["G75"],tags:["Math","String","Stack","Recursion"]},
+  {cat:"Stack",name:"Implement Queue using Stacks",lc:232,diff:"Easy",src:["G75"],tags:["Stack","Design","Queue"]},
+  {cat:"Stack",name:"Remove Invalid Parentheses",lc:301,diff:"Hard",src:["FB"],tags:["String","BFS","Backtracking"]},
+  {cat:"Stack",name:"Longest Valid Parentheses",lc:32,diff:"Hard",src:["FB"],tags:["String","Dynamic Programming","Stack"]},
+  {cat:"Binary Search",name:"Binary Search",lc:704,diff:"Easy",src:["NC150","G75"],tags:["Array","Binary Search"]},
+  {cat:"Binary Search",name:"Find Minimum in Rotated Sorted Array",lc:153,diff:"Medium",src:["B75","NC150"],tags:["Array","Binary Search"]},
+  {cat:"Binary Search",name:"Search in Rotated Sorted Array",lc:33,diff:"Medium",src:["B75","NC150","G75","FB"],tags:["Array","Binary Search"]},
+  {cat:"Binary Search",name:"Search a 2D Matrix",lc:74,diff:"Medium",src:["NC150"],tags:["Array","Binary Search","Matrix"]},
+  {cat:"Binary Search",name:"Koko Eating Bananas",lc:875,diff:"Medium",src:["NC150"],tags:["Array","Binary Search"]},
+  {cat:"Binary Search",name:"Time Based Key Value Store",lc:981,diff:"Medium",src:["NC150","G75"],tags:["Hash Table","Binary Search","Design"]},
+  {cat:"Binary Search",name:"Median of Two Sorted Arrays",lc:4,diff:"Hard",src:["NC150"],tags:["Array","Binary Search","Divide and Conquer"]},
+  {cat:"Binary Search",name:"Find First and Last Position of Element in Sorted Array",lc:34,diff:"Medium",src:["FB"],tags:["Array","Binary Search"]},
+  {cat:"Binary Search",name:"Find Peak Element",lc:162,diff:"Medium",src:["FB"],tags:["Array","Binary Search"]},
+  {cat:"Binary Search",name:"First Bad Version",lc:278,diff:"Easy",src:["G75","FB"],tags:["Binary Search","Interactive"]},
+  {cat:"Binary Search",name:"Intersection of Two Arrays II",lc:350,diff:"Easy",src:["FB"],tags:["Array","Hash Table","Binary Search","Sorting"]},
+  {cat:"Binary Search",name:"Pow(x,n)",lc:50,diff:"Medium",src:["NC150","FB"],tags:["Math","Recursion"]},
+  {cat:"Binary Search",name:"Divide Two Integers",lc:29,diff:"Medium",src:["FB"],tags:["Math","Bit Manipulation"]},
+  {cat:"Linked List",name:"Reverse Linked List",lc:206,diff:"Easy",src:["B75","NC150","G75"],tags:["Linked List","Recursion"]},
+  {cat:"Linked List",name:"Merge Two Sorted Lists",lc:21,diff:"Easy",src:["B75","NC150","G75","FB"],tags:["Linked List","Recursion"]},
+  {cat:"Linked List",name:"Linked List Cycle",lc:141,diff:"Easy",src:["B75","NC150","G75"],tags:["Hash Table","Linked List","Two Pointers"]},
+  {cat:"Linked List",name:"Reorder List",lc:143,diff:"Medium",src:["B75","NC150","FB"],tags:["Linked List","Two Pointers","Stack","Recursion"]},
+  {cat:"Linked List",name:"Remove Nth Node From End of List",lc:19,diff:"Medium",src:["B75","NC150"],tags:["Linked List","Two Pointers"]},
+  {cat:"Linked List",name:"Copy List With Random Pointer",lc:138,diff:"Medium",src:["NC150","FB"],tags:["Hash Table","Linked List"]},
+  {cat:"Linked List",name:"Add Two Numbers",lc:2,diff:"Medium",src:["NC150","FB"],tags:["Linked List","Math","Recursion"]},
+  {cat:"Linked List",name:"Find The Duplicate Number",lc:287,diff:"Medium",src:["NC150"],tags:["Array","Two Pointers","Binary Search"]},
+  {cat:"Linked List",name:"LRU Cache",lc:146,diff:"Medium",src:["NC150","G75","FB"],tags:["Hash Table","Linked List","Design"]},
+  {cat:"Linked List",name:"Merge K Sorted Lists",lc:23,diff:"Hard",src:["B75","NC150","G75"],tags:["Linked List","Divide and Conquer","Heap"]},
+  {cat:"Linked List",name:"Reverse Nodes in K Group",lc:25,diff:"Hard",src:["NC150"],tags:["Linked List","Recursion"]},
+  {cat:"Linked List",name:"Middle of the Linked List",lc:876,diff:"Easy",src:["G75"],tags:["Linked List","Two Pointers"]},
+  {cat:"Trees",name:"Invert Binary Tree",lc:226,diff:"Easy",src:["B75","NC150","G75"],tags:["Tree","DFS","BFS"]},
+  {cat:"Trees",name:"Maximum Depth of Binary Tree",lc:104,diff:"Easy",src:["B75","NC150","G75"],tags:["Tree","DFS","BFS"]},
+  {cat:"Trees",name:"Same Tree",lc:100,diff:"Easy",src:["B75","NC150"],tags:["Tree","DFS","BFS"]},
+  {cat:"Trees",name:"Subtree of Another Tree",lc:572,diff:"Easy",src:["B75","NC150"],tags:["Tree","DFS","Hash Function"]},
+  {cat:"Trees",name:"Lowest Common Ancestor of a BST",lc:235,diff:"Medium",src:["B75","NC150","G75","FB"],tags:["Tree","DFS","BST"]},
+  {cat:"Trees",name:"Binary Tree Level Order Traversal",lc:102,diff:"Medium",src:["B75","NC150","G75"],tags:["Tree","BFS"]},
+  {cat:"Trees",name:"Validate Binary Search Tree",lc:98,diff:"Medium",src:["B75","NC150","G75","FB"],tags:["Tree","DFS","BST"]},
+  {cat:"Trees",name:"Kth Smallest Element In a BST",lc:230,diff:"Medium",src:["B75","NC150","G75"],tags:["Tree","DFS","BST"]},
+  {cat:"Trees",name:"Construct Binary Tree From Preorder And Inorder Traversal",lc:105,diff:"Medium",src:["B75","NC150","G75"],tags:["Array","Divide and Conquer","Tree","DFS"]},
+  {cat:"Trees",name:"Binary Tree Maximum Path Sum",lc:124,diff:"Hard",src:["B75","NC150","FB"],tags:["Dynamic Programming","Tree","DFS"]},
+  {cat:"Trees",name:"Serialize and Deserialize Binary Tree",lc:297,diff:"Hard",src:["B75","NC150","G75","FB"],tags:["String","Tree","DFS","BFS","Design"]},
+  {cat:"Trees",name:"Diameter of Binary Tree",lc:543,diff:"Easy",src:["NC150","G75","FB"],tags:["Tree","DFS"]},
+  {cat:"Trees",name:"Balanced Binary Tree",lc:110,diff:"Easy",src:["NC150","G75"],tags:["Tree","DFS"]},
+  {cat:"Trees",name:"Binary Tree Right Side View",lc:199,diff:"Medium",src:["NC150","G75","FB"],tags:["Tree","DFS","BFS"]},
+  {cat:"Trees",name:"Count Good Nodes In Binary Tree",lc:1448,diff:"Medium",src:["NC150"],tags:["Tree","DFS","BFS"]},
+  {cat:"Trees",name:"Lowest Common Ancestor of a Binary Tree",lc:236,diff:"Medium",src:["G75","FB"],tags:["Tree","DFS"]},
+  {cat:"Trees",name:"Flatten Binary Tree to Linked List",lc:114,diff:"Medium",src:["FB"],tags:["Linked List","Stack","Tree","DFS"]},
+  {cat:"Trees",name:"Binary Tree Paths",lc:257,diff:"Easy",src:["FB"],tags:["String","Backtracking","Tree","DFS"]},
+  {cat:"Trees",name:"Flood Fill",lc:733,diff:"Easy",src:["G75"],tags:["Array","DFS","BFS","Matrix"]},
+  {cat:"Trees",name:"Binary Tree Vertical Order Traversal",lc:314,diff:"Medium",src:["FB"],tags:["Hash Table","Tree","DFS","BFS"]},
+  {cat:"Trees",name:"Convert BST to Sorted Doubly Linked List",lc:426,diff:"Medium",src:["FB"],tags:["Linked List","Tree","DFS","BST"]},
+  {cat:"Trees",name:"Accounts Merge",lc:721,diff:"Medium",src:["G75","FB"],tags:["Array","Hash Table","DFS","Union Find"]},
+  {cat:"Heap / Priority Queue",name:"Find Median From Data Stream",lc:295,diff:"Hard",src:["B75","NC150","G75"],tags:["Two Pointers","Design","Heap"]},
+  {cat:"Heap / Priority Queue",name:"Kth Largest Element In a Stream",lc:703,diff:"Easy",src:["NC150"],tags:["Tree","Design","Heap"]},
+  {cat:"Heap / Priority Queue",name:"Last Stone Weight",lc:1046,diff:"Easy",src:["NC150"],tags:["Array","Heap","Greedy"]},
+  {cat:"Heap / Priority Queue",name:"K Closest Points to Origin",lc:973,diff:"Medium",src:["NC150","G75"],tags:["Array","Divide and Conquer","Heap","Quickselect"]},
+  {cat:"Heap / Priority Queue",name:"Kth Largest Element In An Array",lc:215,diff:"Medium",src:["NC150"],tags:["Array","Divide and Conquer","Sorting","Heap","Quickselect"]},
+  {cat:"Heap / Priority Queue",name:"Task Scheduler",lc:621,diff:"Medium",src:["NC150","G75"],tags:["Array","Hash Table","Greedy","Heap"]},
+  {cat:"Heap / Priority Queue",name:"Design Twitter",lc:355,diff:"Medium",src:["NC150"],tags:["Hash Table","Linked List","Design","Heap"]},
+  {cat:"Heap / Priority Queue",name:"Maximum Profit in Job Scheduling",lc:1235,diff:"Hard",src:["G75"],tags:["Array","Binary Search","Dynamic Programming","Sorting"]},
+  {cat:"Backtracking",name:"Combination Sum",lc:39,diff:"Medium",src:["B75","NC150","G75"],tags:["Array","Backtracking"]},
+  {cat:"Backtracking",name:"Word Search",lc:79,diff:"Medium",src:["B75","NC150","G75"],tags:["Array","Matrix","Backtracking"]},
+  {cat:"Backtracking",name:"Subsets",lc:78,diff:"Medium",src:["NC150","G75","FB"],tags:["Array","Bit Manipulation","Backtracking"]},
+  {cat:"Backtracking",name:"Combination Sum II",lc:40,diff:"Medium",src:["NC150"],tags:["Array","Backtracking"]},
+  {cat:"Backtracking",name:"Permutations",lc:46,diff:"Medium",src:["NC150","G75","FB"],tags:["Array","Backtracking"]},
+  {cat:"Backtracking",name:"Subsets II",lc:90,diff:"Medium",src:["NC150"],tags:["Array","Bit Manipulation","Backtracking"]},
+  {cat:"Backtracking",name:"Palindrome Partitioning",lc:131,diff:"Medium",src:["NC150"],tags:["String","Dynamic Programming","Backtracking"]},
+  {cat:"Backtracking",name:"Letter Combinations of a Phone Number",lc:17,diff:"Medium",src:["NC150","G75","FB"],tags:["Hash Table","String","Backtracking"]},
+  {cat:"Backtracking",name:"Permutations II",lc:47,diff:"Medium",src:["FB"],tags:["Array","Backtracking"]},
+  {cat:"Backtracking",name:"Regular Expression Matching",lc:10,diff:"Hard",src:["FB"],tags:["String","Dynamic Programming","Recursion"]},
+  {cat:"Backtracking",name:"Expression Add Operators",lc:282,diff:"Hard",src:["FB"],tags:["Math","String","Backtracking"]},
+  {cat:"Tries",name:"Implement Trie Prefix Tree",lc:208,diff:"Medium",src:["B75","NC150","G75"],tags:["Hash Table","String","Design","Trie"]},
+  {cat:"Tries",name:"Design Add And Search Words Data Structure",lc:211,diff:"Medium",src:["B75","NC150","FB"],tags:["String","Design","Backtracking","Trie"]},
+  {cat:"Tries",name:"Word Search II",lc:212,diff:"Hard",src:["B75","NC150"],tags:["Array","String","Matrix","Backtracking","Trie"]},
+  {cat:"Graphs",name:"Number of Islands",lc:200,diff:"Medium",src:["B75","NC150","G75","FB"],tags:["Array","DFS","BFS","Union Find","Matrix"]},
+  {cat:"Graphs",name:"Clone Graph",lc:133,diff:"Medium",src:["B75","NC150","G75","FB"],tags:["Hash Table","DFS","BFS","Graph"]},
+  {cat:"Graphs",name:"Pacific Atlantic Water Flow",lc:417,diff:"Medium",src:["B75","NC150"],tags:["Array","DFS","BFS","Matrix"]},
+  {cat:"Graphs",name:"Course Schedule",lc:207,diff:"Medium",src:["B75","NC150","G75"],tags:["DFS","BFS","Graph","Topological Sort"]},
+  {cat:"Graphs",name:"Graph Valid Tree",lc:261,diff:"Medium",src:["B75","NC150"],tags:["DFS","BFS","Union Find","Graph"]},
+  {cat:"Graphs",name:"Number of Connected Components In An Undirected Graph",lc:323,diff:"Medium",src:["B75","NC150"],tags:["DFS","BFS","Union Find","Graph"]},
+  {cat:"Graphs",name:"Max Area of Island",lc:695,diff:"Medium",src:["NC150"],tags:["Array","DFS","BFS","Union Find","Matrix"]},
+  {cat:"Graphs",name:"Walls and Gates",lc:286,diff:"Medium",src:["NC150"],tags:["Array","BFS","Matrix"]},
+  {cat:"Graphs",name:"Rotting Oranges",lc:994,diff:"Medium",src:["NC150","G75"],tags:["Array","BFS","Matrix"]},
+  {cat:"Graphs",name:"Surrounded Regions",lc:130,diff:"Medium",src:["NC150"],tags:["Array","DFS","BFS","Union Find","Matrix"]},
+  {cat:"Graphs",name:"Course Schedule II",lc:210,diff:"Medium",src:["NC150"],tags:["DFS","BFS","Graph","Topological Sort"]},
+  {cat:"Graphs",name:"Redundant Connection",lc:684,diff:"Medium",src:["NC150"],tags:["DFS","BFS","Union Find","Graph"]},
+  {cat:"Graphs",name:"Word Ladder",lc:127,diff:"Hard",src:["G75"],tags:["Hash Table","String","BFS"]},
+  {cat:"Graphs",name:"01 Matrix",lc:542,diff:"Medium",src:["G75"],tags:["Array","Dynamic Programming","BFS","Matrix"]},
+  {cat:"Graphs",name:"Minimum Height Trees",lc:310,diff:"Medium",src:["G75"],tags:["DFS","BFS","Graph","Topological Sort"]},
+  {cat:"Graphs",name:"Alien Dictionary",lc:269,diff:"Hard",src:["B75","NC150","FB"],tags:["Array","String","DFS","BFS","Graph","Topological Sort"]},
+  {cat:"Graphs",name:"Shortest Distance from All Buildings",lc:317,diff:"Hard",src:["FB"],tags:["Array","BFS","Matrix"]},
+  {cat:"Graphs",name:"Is Graph Bipartite?",lc:785,diff:"Medium",src:["FB"],tags:["DFS","BFS","Union Find","Graph"]},
+  {cat:"Advanced Graphs",name:"Network Delay Time",lc:743,diff:"Medium",src:["NC150"],tags:["DFS","BFS","Graph","Shortest Path","Heap"]},
+  {cat:"Advanced Graphs",name:"Reconstruct Itinerary",lc:332,diff:"Hard",src:["NC150"],tags:["DFS","Graph","Eulerian Circuit"]},
+  {cat:"Advanced Graphs",name:"Min Cost to Connect All Points",lc:1584,diff:"Medium",src:["NC150"],tags:["Array","Union Find","Graph","Minimum Spanning Tree"]},
+  {cat:"Advanced Graphs",name:"Swim In Rising Water",lc:778,diff:"Hard",src:["NC150"],tags:["Array","Binary Search","DFS","BFS","Heap"]},
+  {cat:"Advanced Graphs",name:"Cheapest Flights Within K Stops",lc:787,diff:"Medium",src:["NC150"],tags:["Dynamic Programming","DFS","BFS","Graph","Shortest Path"]},
+  {cat:"1-D Dynamic Programming",name:"Climbing Stairs",lc:70,diff:"Easy",src:["B75","NC150","G75"],tags:["Math","Dynamic Programming","Memoization"]},
+  {cat:"1-D Dynamic Programming",name:"House Robber",lc:198,diff:"Medium",src:["B75","NC150"],tags:["Array","Dynamic Programming"]},
+  {cat:"1-D Dynamic Programming",name:"House Robber II",lc:213,diff:"Medium",src:["B75","NC150"],tags:["Array","Dynamic Programming"]},
+  {cat:"1-D Dynamic Programming",name:"Longest Palindromic Substring",lc:5,diff:"Medium",src:["B75","NC150","G75","FB"],tags:["String","Dynamic Programming"]},
+  {cat:"1-D Dynamic Programming",name:"Palindromic Substrings",lc:647,diff:"Medium",src:["B75","NC150"],tags:["String","Dynamic Programming"]},
+  {cat:"1-D Dynamic Programming",name:"Decode Ways",lc:91,diff:"Medium",src:["B75","NC150","FB"],tags:["String","Dynamic Programming"]},
+  {cat:"1-D Dynamic Programming",name:"Coin Change",lc:322,diff:"Medium",src:["B75","NC150","G75"],tags:["Array","Dynamic Programming","BFS"]},
+  {cat:"1-D Dynamic Programming",name:"Maximum Product Subarray",lc:152,diff:"Medium",src:["B75","NC150"],tags:["Array","Dynamic Programming"]},
+  {cat:"1-D Dynamic Programming",name:"Word Break",lc:139,diff:"Medium",src:["B75","NC150","G75","FB"],tags:["Array","Hash Table","String","Dynamic Programming"]},
+  {cat:"1-D Dynamic Programming",name:"Longest Increasing Subsequence",lc:300,diff:"Medium",src:["B75","NC150"],tags:["Array","Binary Search","Dynamic Programming"]},
+  {cat:"1-D Dynamic Programming",name:"Min Cost Climbing Stairs",lc:746,diff:"Easy",src:["NC150"],tags:["Array","Dynamic Programming"]},
+  {cat:"1-D Dynamic Programming",name:"Partition Equal Subset Sum",lc:416,diff:"Medium",src:["G75"],tags:["Array","Dynamic Programming"]},
+  {cat:"2-D Dynamic Programming",name:"Unique Paths",lc:62,diff:"Medium",src:["B75","NC150","G75"],tags:["Math","Dynamic Programming","Combinatorics"]},
+  {cat:"2-D Dynamic Programming",name:"Longest Common Subsequence",lc:1143,diff:"Medium",src:["B75","NC150","G75"],tags:["String","Dynamic Programming"]},
+  {cat:"2-D Dynamic Programming",name:"Best Time to Buy and Sell Stock With Cooldown",lc:309,diff:"Medium",src:["NC150"],tags:["Array","Dynamic Programming"]},
+  {cat:"2-D Dynamic Programming",name:"Coin Change II",lc:518,diff:"Medium",src:["NC150"],tags:["Array","Dynamic Programming"]},
+  {cat:"2-D Dynamic Programming",name:"Target Sum",lc:494,diff:"Medium",src:["NC150"],tags:["Array","Dynamic Programming","Backtracking"]},
+  {cat:"2-D Dynamic Programming",name:"Interleaving String",lc:97,diff:"Medium",src:["NC150"],tags:["String","Dynamic Programming"]},
+  {cat:"2-D Dynamic Programming",name:"Longest Increasing Path In a Matrix",lc:329,diff:"Hard",src:["NC150"],tags:["Array","Dynamic Programming","DFS","BFS","Topological Sort"]},
+  {cat:"2-D Dynamic Programming",name:"Distinct Subsequences",lc:115,diff:"Hard",src:["NC150"],tags:["String","Dynamic Programming"]},
+  {cat:"2-D Dynamic Programming",name:"Edit Distance",lc:72,diff:"Medium",src:["NC150"],tags:["String","Dynamic Programming"]},
+  {cat:"2-D Dynamic Programming",name:"Burst Balloons",lc:312,diff:"Hard",src:["NC150"],tags:["Array","Dynamic Programming","Divide and Conquer"]},
+  {cat:"2-D Dynamic Programming",name:"Regular Expression Matching",lc:10,diff:"Hard",src:["NC150","FB"],tags:["String","Dynamic Programming","Recursion"]},
+  {cat:"2-D Dynamic Programming",name:"Range Sum Query 2D Immutable",lc:304,diff:"Medium",src:["FB"],tags:["Array","Design","Matrix","Prefix Sum"]},
+  {cat:"2-D Dynamic Programming",name:"Continuous Subarray Sum",lc:523,diff:"Medium",src:["FB"],tags:["Array","Hash Table","Math","Prefix Sum"]},
+  {cat:"Greedy",name:"Maximum Subarray",lc:53,diff:"Medium",src:["B75","NC150","G75"],tags:["Array","Divide and Conquer","Dynamic Programming"]},
+  {cat:"Greedy",name:"Jump Game",lc:55,diff:"Medium",src:["B75","NC150"],tags:["Array","Dynamic Programming","Greedy"]},
+  {cat:"Greedy",name:"Jump Game II",lc:45,diff:"Medium",src:["NC150"],tags:["Array","Dynamic Programming","Greedy"]},
+  {cat:"Greedy",name:"Gas Station",lc:134,diff:"Medium",src:["NC150"],tags:["Array","Greedy"]},
+  {cat:"Greedy",name:"Hand of Straights",lc:846,diff:"Medium",src:["NC150"],tags:["Array","Hash Table","Greedy","Sorting"]},
+  {cat:"Greedy",name:"Merge Triplets to Form Target Triplet",lc:1899,diff:"Medium",src:["NC150"],tags:["Array","Greedy"]},
+  {cat:"Greedy",name:"Partition Labels",lc:763,diff:"Medium",src:["NC150"],tags:["Hash Table","Two Pointers","String","Greedy"]},
+  {cat:"Greedy",name:"Longest Palindrome",lc:409,diff:"Easy",src:["G75"],tags:["Hash Table","String","Greedy"]},
+  {cat:"Intervals",name:"Insert Interval",lc:57,diff:"Medium",src:["B75","NC150","G75"],tags:["Array"]},
+  {cat:"Intervals",name:"Merge Intervals",lc:56,diff:"Medium",src:["B75","NC150","G75","FB"],tags:["Array","Sorting"]},
+  {cat:"Intervals",name:"Non Overlapping Intervals",lc:435,diff:"Medium",src:["B75","NC150"],tags:["Array","Dynamic Programming","Greedy","Sorting"]},
+  {cat:"Intervals",name:"Meeting Rooms",lc:252,diff:"Easy",src:["B75","NC150"],tags:["Array","Sorting"]},
+  {cat:"Intervals",name:"Meeting Rooms II",lc:253,diff:"Medium",src:["NC150","FB"],tags:["Array","Two Pointers","Greedy","Sorting","Heap"]},
+  {cat:"Intervals",name:"Minimum Interval to Include Each Query",lc:1851,diff:"Hard",src:["NC150"],tags:["Array","Binary Search","Sorting","Heap"]},
+  {cat:"Intervals",name:"Interval List Intersections",lc:986,diff:"Medium",src:["FB"],tags:["Array","Two Pointers"]},
+  {cat:"Math & Geometry",name:"Rotate Image",lc:48,diff:"Medium",src:["B75","NC150"],tags:["Array","Math","Matrix"]},
+  {cat:"Math & Geometry",name:"Spiral Matrix",lc:54,diff:"Medium",src:["B75","NC150","G75"],tags:["Array","Matrix","Simulation"]},
+  {cat:"Math & Geometry",name:"Set Matrix Zeroes",lc:73,diff:"Medium",src:["B75","NC150"],tags:["Array","Hash Table","Matrix"]},
+  {cat:"Math & Geometry",name:"Happy Number",lc:202,diff:"Easy",src:["NC150"],tags:["Hash Table","Math","Two Pointers"]},
+  {cat:"Math & Geometry",name:"Plus One",lc:66,diff:"Easy",src:["NC150"],tags:["Array","Math"]},
+  {cat:"Math & Geometry",name:"Detect Squares",lc:2013,diff:"Medium",src:["NC150"],tags:["Array","Hash Table","Design","Counting","Geometry"]},
+  {cat:"Math & Geometry",name:"Integer to English Words",lc:273,diff:"Hard",src:["FB"],tags:["Math","String","Recursion"]},
+  {cat:"Math & Geometry",name:"Validate IP Address",lc:468,diff:"Medium",src:["FB"],tags:["String"]},
+  {cat:"Math & Geometry",name:"Multiply Strings (math)",lc:43,diff:"Medium",src:["NC150","FB"],tags:["Math","String"]},
+  {cat:"Bit Manipulation",name:"Number of 1 Bits",lc:191,diff:"Easy",src:["B75","NC150"],tags:["Divide and Conquer","Bit Manipulation"]},
+  {cat:"Bit Manipulation",name:"Counting Bits",lc:338,diff:"Easy",src:["B75","NC150"],tags:["Dynamic Programming","Bit Manipulation"]},
+  {cat:"Bit Manipulation",name:"Reverse Bits",lc:190,diff:"Easy",src:["B75","NC150"],tags:["Divide and Conquer","Bit Manipulation"]},
+  {cat:"Bit Manipulation",name:"Missing Number",lc:268,diff:"Easy",src:["B75","NC150"],tags:["Array","Hash Table","Math","Bit Manipulation"]},
+  {cat:"Bit Manipulation",name:"Sum of Two Integers",lc:371,diff:"Medium",src:["B75","NC150"],tags:["Math","Bit Manipulation"]},
+  {cat:"Bit Manipulation",name:"Single Number",lc:136,diff:"Easy",src:["NC150"],tags:["Array","Bit Manipulation"]},
+  {cat:"Bit Manipulation",name:"Reverse Integer",lc:7,diff:"Medium",src:["NC150"],tags:["Math","Bit Manipulation"]},
+];
+
+// Deduplicate by lc number
+const seen = new Set();
+const ALL = [];
+for (const p of PROBLEMS) {
+  const k = p.lc + "|" + p.name;
+  if (!seen.has(k)) { seen.add(k); ALL.push(p); }
+}
+
+const CATS = [...new Set(ALL.map(p => p.cat))];
+const LS_KEY = "dsa_grind_v1";
+
+// ─────────────────────────── STATE ───────────────────────────
+let state = { done: {}, practice: {}, notes: {}, collapsed: {} };
+let activeChips = new Set();
+let currentNoteKey = null;
+
+function loadState() {
+  try {
+    const s = localStorage.getItem(LS_KEY);
+    if (s) state = { ...{ done:{}, practice:{}, notes:{}, collapsed:{} }, ...JSON.parse(s) };
+  } catch(e) {}
+}
+
+function saveState() {
+  localStorage.setItem(LS_KEY, JSON.stringify(state));
+}
+
+function probKey(p) { return p.lc + "_" + p.name.replace(/\s+/g,"_"); }
+function lcSlug(name) {
+  return name.toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, '')
+    .trim()
+    .replace(/\s+/g, '-');
+}
+function lcUrl(name) { return "https://leetcode.com/problems/" + lcSlug(name) + "/description/"; }
+function ytUrl(p) { return "https://www.youtube.com/results?search_query=leetcode+" + p.lc + "+" + lcSlug(p.name); }
+
+// ─────────────────────────── STATS ───────────────────────────
+function getStats(problems) {
+  const total = problems.length;
+  const done = problems.filter(p => state.done[probKey(p)]).length;
+  const practiced = problems.filter(p => (state.practice[probKey(p)]||0) > 0).length;
+  const totalPractice = problems.reduce((s,p) => s + (state.practice[probKey(p)]||0), 0);
+  return { total, done, practiced, totalPractice };
+}
+
+// ─────────────────────────── TOPBAR STATS ───────────────────────────
+function syncCollapseBtn() {
+  const btn = document.getElementById("collapseAllBtn");
+  if (!btn) return;
+  const allCollapsed = CATS.every(c => state.collapsed[c]);
+  btn.textContent = allCollapsed ? "⊞ Expand All" : "⊟ Collapse All";
+}
+
+function renderTopStats() {
+  const s = getStats(ALL);
+  const pct = Math.round(s.done / s.total * 100);
+  document.getElementById("topStats").innerHTML = `
+    <div class="tstat"><span class="tstat-dot" style="background:var(--green)"></span><span class="tstat-label">Done</span><span class="tstat-val" style="color:var(--green)">${s.done}/${s.total}</span></div>
+    <div class="tstat"><span class="tstat-dot" style="background:var(--accent)"></span><span class="tstat-label">Practiced</span><span class="tstat-val" style="color:var(--accent)">${s.totalPractice}x total</span></div>
+    <div class="tstat"><span class="tstat-dot" style="background:var(--amber)"></span><span class="tstat-label">Progress</span><span class="tstat-val" style="color:var(--amber)">${pct}%</span></div>
+  `;
+}
+
+// ─────────────────────────── SIDEBAR ───────────────────────────
+function renderSidebar() {
+  const sidebar = document.getElementById("sidebar");
+  let html = `<div class="sidebar-section"><div class="sidebar-label">Categories</div>`;
+  html += `<div class="sidebar-item" onclick="scrollToCat('__all__')"><span class="cat-name">All Problems</span><span class="cat-count">${ALL.length}</span></div>`;
+  for (const cat of CATS) {
+    const catProbs = ALL.filter(p => p.cat === cat);
+    const done = catProbs.filter(p => state.done[probKey(p)]).length;
+    const pct = Math.round(done / catProbs.length * 100);
+    html += `<div class="sidebar-item" onclick="scrollToCat('${cat.replace(/\W/g,'_')}')">
+      <span class="cat-name" style="font-size:12px">${cat}</span>
+      <span class="cat-done" style="font-size:10px">${done}/${catProbs.length}</span>
+    </div>`;
+  }
+  html += `</div>`;
+  sidebar.innerHTML = html;
+}
+
+function scrollToCat(id) {
+  if (id === '__all__') { document.getElementById("main").scrollTop = 0; return; }
+  const el = document.getElementById("sec_" + id);
+  if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+// ─────────────────────────── FILTER LOGIC ───────────────────────────
+function toggleChip(id) {
+  if (activeChips.has(id)) activeChips.delete(id);
+  else activeChips.add(id);
+  document.getElementById("chip-"+id).classList.toggle("active", activeChips.has(id));
+  renderAll();
+}
+
+function filteredProblems() {
+  const search = document.getElementById("searchInput").value.toLowerCase().trim();
+  const diff = document.getElementById("diffSel").value;
+  const src = document.getElementById("srcSel").value;
+  return ALL.filter(p => {
+    if (search && !p.name.toLowerCase().includes(search) && !String(p.lc).includes(search)) return false;
+    if (diff && p.diff !== diff) return false;
+    if (src && !p.src.includes(src)) return false;
+    if (activeChips.has("hot") && p.src.length < 3) return false;
+    if (activeChips.has("done") && !state.done[probKey(p)]) return false;
+    if (activeChips.has("undone") && state.done[probKey(p)]) return false;
+    return true;
+  });
+}
+
+// ─────────────────────────── RENDER ALL ───────────────────────────
+function renderAll() {
+  renderTopStats();
+  renderSidebar();
+  syncCollapseBtn();
+  const filtered = filteredProblems();
+  const s = getStats(filtered);
+  const pct = s.total > 0 ? Math.round(s.done / s.total * 100) : 0;
+
+  let html = `
+    <div class="progress-banner">
+      <div class="prog-stat"><div class="num" style="color:var(--green)">${s.done}</div><div class="lbl">Completed</div></div>
+      <div class="prog-stat"><div class="num" style="color:var(--text2)">${s.total - s.done}</div><div class="lbl">Remaining</div></div>
+      <div class="prog-stat"><div class="num" style="color:var(--accent)">${s.totalPractice}</div><div class="lbl">Total Reps</div></div>
+      <div class="prog-stat"><div class="num" style="color:var(--amber)">${s.total}</div><div class="lbl">Shown</div></div>
+      <div class="prog-bar-wrap">
+        <div class="prog-bar-label"><span>Overall Progress</span><span style="font-family:var(--mono);font-weight:600;color:var(--text)">${pct}%</span></div>
+        <div class="prog-bar-track"><div class="prog-bar-fill" style="width:${pct}%"></div></div>
+      </div>
+    </div>`;
+
+  if (filtered.length === 0) {
+    html += `<div class="empty-state">∅<p>No problems match these filters.</p></div>`;
+  } else {
+    for (const cat of CATS) {
+      const rows = filtered.filter(p => p.cat === cat);
+      if (rows.length === 0) continue;
+      const catId = "sec_" + cat.replace(/\W/g,"_");
+      const isCollapsed = state.collapsed[cat];
+      const doneCnt = rows.filter(p => state.done[probKey(p)]).length;
+      html += `<div class="category-section" id="${catId}">
+        <div class="cat-header${isCollapsed ? " collapsed" : ""}" onclick="toggleCat('${cat.replace(/'/g,"\\'")}')">
+          <h2>${cat}</h2>
+          <span class="cat-badge">${rows.length} problems</span>
+          <span class="cat-progress">${doneCnt}/${rows.length} done</span>
+          <span class="cat-toggle">▼</span>
+        </div>
+        <div class="section-body${isCollapsed ? " collapsed" : ""}">
+        <div class="table-wrap"><table>
+          <thead><tr>
+            <th style="width:40px">Done</th>
+            <th style="width:50px">#</th>
+            <th>Problem</th>
+            <th style="width:80px">Difficulty</th>
+            <th style="width:90px">Frequency</th>
+            <th style="width:120px">Sources</th>
+            <th style="width:130px">Practice</th>
+            <th style="width:160px">Tags</th>
+            <th style="width:50px">Note</th>
+          </tr></thead>
+          <tbody>`;
+      for (const p of rows) {
+        const k = probKey(p);
+        const isDone = !!state.done[k];
+        const count = state.practice[k] || 0;
+        const hasNote = !!(state.notes[k] && state.notes[k].trim());
+        const freq = p.src.length;
+        const pips = [1,2,3,4].map(i =>
+          `<span class="freq-pip${i<=freq ? " lit f"+freq : ""}"></span>`
+        ).join("");
+        const srcs = p.src.filter(s => s !== "NC150").map(s => `<span class="src-tag src-${s}">${s === "FB" ? "FAANG" : s}</span>`).join("");
+        const tags = p.tags.slice(0,3).map(t => `<span class="tag">${t}</span>`).join("");
+        html += `<tr class="${isDone ? "done-row" : ""}">
+          <td class="check-cell">
+            <div class="custom-check${isDone ? " checked" : ""}" onclick="toggleDone('${k}')">${isDone ? "✓" : ""}</div>
+          </td>
+          <td style="color:var(--text3);font-family:var(--mono);font-size:11px">${p.lc}</td>
+          <td><a class="prob-link" href="${lcUrl(p.name)}" target="_blank">${p.name}</a><a class="yt-link" href="${ytUrl(p)}" target="_blank" title="Search YouTube"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.8 15.5V8.5l6.3 3.5-6.3 3.5z"/></svg></a></td>
+          <td><span class="diff diff-${p.diff}">${p.diff}</span></td>
+          <td><div class="freq-wrap">${pips}<span class="freq-label">${freq}x</span></div></td>
+          <td><div class="src-tags">${srcs}</div></td>
+          <td class="practice-cell">
+            <div class="practice-wrap">
+              <button class="prac-btn" onclick="changePractice('${k}',-1)">−</button>
+              <span class="prac-num${count>0 ? " has-count" : ""}" id="pc_${k}">${count}</span>
+              <button class="prac-btn" onclick="changePractice('${k}',1)">+</button>
+            </div>
+          </td>
+          <td><div class="tag-list">${tags}</div></td>
+          <td>
+            <button class="note-btn${hasNote ? " has-note" : ""}" onclick="openNote('${k}','${p.name.replace(/'/g,"\\'")} - LC${p.lc}')" title="${hasNote ? "Has note" : "Add note"}">
+              ${hasNote ? "📝" : "＋"}
+            </button>
+          </td>
+        </tr>`;
+      }
+      html += `</tbody></table></div></div></div>`;
+    }
+  }
+  document.getElementById("pageContent").innerHTML = html;
+}
+
+// ─────────────────────────── ACTIONS ───────────────────────────
+function toggleDone(k) {
+  state.done[k] = !state.done[k];
+  saveState();
+  renderAll();
+  if (state.done[k]) showToast("✓ Marked complete", "success");
+}
+
+function changePractice(k, delta) {
+  const cur = state.practice[k] || 0;
+  const next = Math.max(0, cur + delta);
+  state.practice[k] = next;
+  saveState();
+  const el = document.getElementById("pc_" + k);
+  if (el) {
+    el.textContent = next;
+    el.className = "prac-num" + (next > 0 ? " has-count" : "");
+  }
+  renderTopStats();
+  renderSidebar();
+}
+
+function toggleCat(cat) {
+  state.collapsed[cat] = !state.collapsed[cat];
+  saveState();
+  renderAll();
+}
+
+// ─────────────────────────── NOTES ───────────────────────────
+function openNote(k, title) {
+  currentNoteKey = k;
+  document.getElementById("noteModalTitle").textContent = title;
+  document.getElementById("noteModalSub").textContent = "Your approach, complexity notes, key insights...";
+  document.getElementById("noteTextarea").value = state.notes[k] || "";
+  document.getElementById("noteModal").classList.add("open");
+  setTimeout(() => document.getElementById("noteTextarea").focus(), 50);
+}
+
+function saveNote() {
+  if (!currentNoteKey) return;
+  state.notes[currentNoteKey] = document.getElementById("noteTextarea").value;
+  saveState();
+  closeNoteModal();
+  renderAll();
+  showToast("📝 Note saved", "success");
+}
+
+function closeNoteModal() {
+  document.getElementById("noteModal").classList.remove("open");
+  currentNoteKey = null;
+}
+
+function closeModal(e) {
+  if (e.target === document.getElementById("noteModal")) closeNoteModal();
+}
+
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape") closeNoteModal();
+});
+
+// ─────────────────────────── EXPORT / IMPORT ───────────────────────────
+function exportData() {
+  const blob = new Blob([JSON.stringify({...state, exported: new Date().toISOString()}, null, 2)], {type:"application/json"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "dsa_tracker_backup_" + new Date().toISOString().slice(0,10) + ".json";
+  a.click();
+  showToast("⬆ Backup exported", "success");
+}
+
+function importData(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      const data = JSON.parse(ev.target.result);
+      state = { done: data.done||{}, practice: data.practice||{}, notes: data.notes||{}, collapsed: data.collapsed||{} };
+      saveState();
+      renderAll();
+      showToast("⬇ Data imported successfully", "success");
+    } catch { showToast("Error reading file", "danger"); }
+  };
+  reader.readAsText(file);
+  e.target.value = "";
+}
+
+function confirmReset() {
+  if (confirm("Reset ALL progress? This cannot be undone.")) {
+    state = { done: {}, practice: {}, notes: {}, collapsed: {} };
+    saveState();
+    renderAll();
+    showToast("Progress reset", "danger");
+  }
+}
+
+// ─────────────────────────── TOAST ───────────────────────────
+let toastTimer;
+function showToast(msg, type="success") {
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.className = "toast " + type + " show";
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove("show"), 2200);
+}
+
+
+// ─────────────────────────── WELCOME BANNER ───────────────────────────
+function dismissBanner() {
+  document.getElementById("welcomeBanner").classList.add("dismissed");
+  localStorage.setItem("dsa_grind_banner_dismissed", "1");
+}
+
+
+// ─────────────────────────── COLLAPSE ALL / EXPAND ALL ───────────────────────────
+function toggleAllCats() {
+  const allCollapsed = CATS.every(c => state.collapsed[c]);
+  CATS.forEach(c => { state.collapsed[c] = !allCollapsed; });
+  saveState();
+  renderAll();
+  const btn = document.getElementById("collapseAllBtn");
+  if (btn) btn.textContent = allCollapsed ? "⊟ Collapse All" : "⊞ Expand All";
+}
+
+// ─────────────────────────── INIT ───────────────────────────
+loadState();
+if (localStorage.getItem("dsa_grind_banner_dismissed")) {
+  const b = document.getElementById("welcomeBanner");
+  if (b) b.classList.add("dismissed");
+}
+renderAll();
+</script>
+</body>
+</html>
